@@ -28,7 +28,7 @@ GPClient::GPClient(QWidget *parent)
     ui->portalInput->setText(settings::get("portal", "").toString());
 
     // DBus service setup
-    vpn = new com::yuezk::qt::GPService("com.yuezk.qt.GPService", "/", QDBusConnection::systemBus(), this);
+    vpn = new com::yuezk::qt::GPService("com.yuezk.qt.GPService", "/", QDBusConnection::sessionBus(), this);
     connect(vpn, &com::yuezk::qt::GPService::connected, this, &GPClient::onVPNConnected);
     connect(vpn, &com::yuezk::qt::GPService::disconnected, this, &GPClient::onVPNDisconnected);
     connect(vpn, &com::yuezk::qt::GPService::error, this, &GPClient::onVPNError);
@@ -368,12 +368,14 @@ void GPClient::gatewayLogin()
     gatewayAuth->authenticate();
 }
 
-void GPClient::onGatewaySuccess(const QString &authCookie)
+void GPClient::onGatewaySuccess(const QString &authCookie, const GatewayAuthenticatorParams &gatewayAuthenticatorParams)
 {
     PLOGI << "Gateway login succeeded, got the cookie " << authCookie;
 
     isQuickConnect = false;
-    vpn->connect(currentGateway().address(), portalConfig.username(), authCookie, settings::get("extraArgs", "").toString());
+    PLOGI << "Invoking openconnect with [" << currentGateway().address() << "][" << gatewayAuthenticatorParams.username() << "]";
+    PLOGI << "Openconnect extra args are [" << settings::get("extraArgs", "").toString() << "]";
+    vpn->connect(currentGateway().address(), gatewayAuthenticatorParams.username(), authCookie, settings::get("extraArgs", "").toString());
     ui->statusLabel->setText("Connecting...");
     updateConnectionStatus(VpnStatus::pending);
 }

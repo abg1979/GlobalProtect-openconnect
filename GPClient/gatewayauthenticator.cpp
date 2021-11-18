@@ -27,7 +27,7 @@ GatewayAuthenticator::~GatewayAuthenticator()
 
 void GatewayAuthenticator::authenticate()
 {
-    PLOGI << "Start gateway authentication...";
+    PLOGI << "Start gateway authentication using username [" + params.username() + "] ...";
 
     LoginParams loginParams { params.clientos() };
     loginParams.setUser(params.username());
@@ -66,8 +66,8 @@ void GatewayAuthenticator::onLoginFinished()
         normalLoginWindow->close();
     }
 
-    const QUrlQuery params = gpclient::helper::parseGatewayResponse(response);
-    emit success(params.toString());
+    const QUrlQuery gatewayResponseParams = gpclient::helper::parseGatewayResponse(response);
+    emit success(gatewayResponseParams.toString(), params);
 }
 
 void GatewayAuthenticator::doAuth()
@@ -172,6 +172,9 @@ void GatewayAuthenticator::onSAMLLoginSuccess(const QMap<QString, QString> &saml
     loginParams.setPreloginCookie(samlResult.value("preloginCookie"));
     loginParams.setUserAuthCookie(samlResult.value("userAuthCookie"));
 
+    // Update the gateway params with the username so that we can use it later.
+    params.setUsername(samlResult.value("username"));
+    params.setUserAuthCookie(samlResult.value("userAuthCookie"));
     login(loginParams);
 }
 

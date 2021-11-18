@@ -61,7 +61,11 @@ add_3rdparty(
 
 ExternalProject_Get_Property(SingleApplication-${PROJECT_NAME} SOURCE_DIR BINARY_DIR)
 set(SingleApplication_INCLUDE_DIR ${SOURCE_DIR})
-set(SingleApplication_LIBRARY ${BINARY_DIR}/libSingleApplication.a)
+if (WIN32)
+    set(SingleApplication_LIBRARY ${BINARY_DIR}/SingleApplication.lib)
+else()
+    set(SingleApplication_LIBRARY ${BINARY_DIR}/libSingleApplication.a)
+endif ()
 
 ExternalProject_Get_Property(plog-${PROJECT_NAME} SOURCE_DIR)
 set(plog_INCLUDE_DIR "${SOURCE_DIR}/include")
@@ -76,16 +80,29 @@ target_include_directories(gpclient PRIVATE
     ${plog_INCLUDE_DIR}
 )
 
-target_link_libraries(gpclient
-    ${SingleApplication_LIBRARY}
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::WebSockets
-    Qt5::WebEngine
-    Qt5::WebEngineWidgets
-    Qt5::DBus
-    QtSignals
-)
+if (WIN32)
+    target_link_libraries(gpclient
+            ${SingleApplication_LIBRARY}
+            Qt5::Widgets
+            Qt5::Network
+            Qt5::WebSockets
+            Qt5::WebEngine
+            Qt5::WebEngineWidgets
+            Qt5::DBus
+            )
+else()
+    target_link_libraries(gpclient
+            ${SingleApplication_LIBRARY}
+            Qt5::Widgets
+            Qt5::Network
+            Qt5::WebSockets
+            Qt5::WebEngine
+            Qt5::WebEngineWidgets
+            Qt5::DBus
+            QtSignals
+            )
+endif()
+
 
 if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0)
     target_compile_options(gpclient PUBLIC "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")

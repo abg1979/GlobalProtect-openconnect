@@ -17,7 +17,7 @@ public:
     void authenticate();
 
 signals:
-    void success(const QString& authCookie);
+    void success(const QString& authCookie, const GatewayAuthenticatorParams &gatewayAuthenticatorParams);
     void fail(const QString& msg = "");
 
 private slots:
@@ -31,7 +31,7 @@ private slots:
 
 private:
     QString gateway;
-    const GatewayAuthenticatorParams params;
+    GatewayAuthenticatorParams params;
     QString preloginUrl;
     QString loginUrl;
 

@@ -4,6 +4,7 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QRegularExpressionMatch>
 #include <QtDBus/QtDBus>
+#include <QStandardPaths>
 
 #include "gpservice.h"
 #include "gpserviceadaptor.h"
@@ -14,7 +15,7 @@ GPService::GPService(QObject *parent)
 {
     // Register the DBus service
     new GPServiceAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::systemBus();
+    QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerObject("/", this);
     dbus.registerService("com.yuezk.qt.GPService");
 
@@ -33,6 +34,10 @@ GPService::~GPService()
 
 QString GPService::findBinary()
 {
+    QString binaryPath = QStandardPaths::findExecutable("openconnect");
+    if (!binaryPath.isEmpty()) {
+        return binaryPath;
+    }
     for (int i = 0; i < binaryPaths->length(); i++) {
         if (QFileInfo::exists(binaryPaths[i])) {
             return binaryPaths[i];
@@ -94,6 +99,7 @@ void GPService::quit()
 
 void GPService::connect(QString server, QString username, QString passwd, QString extraArgs)
 {
+    log("SERVICE:: Received connect request [" + server + "][" + username + "][" + passwd + "][" + extraArgs + "]");
     if (vpnStatus != GPService::VpnNotConnected) {
         log("VPN status is: " + QVariant::fromValue(vpnStatus).toString());
         return;

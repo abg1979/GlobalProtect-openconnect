@@ -9,6 +9,7 @@
 #include "gpserviceinterface.h"
 #include "portalconfigresponse.h"
 #include "settingsdialog.h"
+#include "gatewayauthenticatorparams.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GPClient; }
@@ -41,7 +42,7 @@ private slots:
     void onPortalConfigFail(const QString msg);
     void onPortalFail(const QString &msg);
 
-    void onGatewaySuccess(const QString &authCookie);
+    void onGatewaySuccess(const QString &authCookie, const GatewayAuthenticatorParams &gatewayAuthenticatorParams);
     void onGatewayFail(const QString &msg);
 
     void onVPNConnected();

@@ -8,7 +8,11 @@
 #include "singleapplication.h"
 #include "gpclient.h"
 #include "enhancedwebview.h"
+
+#ifndef WIN32
 #include "sigwatch.h"
+#endif
+
 #include "version.h"
 
 int main(int argc, char *argv[])
@@ -38,12 +42,13 @@ int main(int argc, char *argv[])
 
     QObject::connect(&app, &SingleApplication::instanceStarted, &w, &GPClient::activate);
 
+#ifndef WIN32
     UnixSignalWatcher sigwatch;
     sigwatch.watchForSignal(SIGINT);
     sigwatch.watchForSignal(SIGTERM);
     sigwatch.watchForSignal(SIGQUIT);
     sigwatch.watchForSignal(SIGHUP);
     QObject::connect(&sigwatch, &UnixSignalWatcher::unixSignal, &w, &GPClient::quit);
-
+#endif
     return app.exec();
 }

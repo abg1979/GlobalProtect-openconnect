@@ -27,6 +27,7 @@ PortalConfigResponse PortalConfigResponse::parse(const QByteArray xml)
         xmlReader.readNextStartElement();
 
         QString name = xmlReader.name().toString();
+        PLOGI << "XML Start reading " << name;
 
         if (name == xmlUserAuthCookie) {
             PLOGI << "Start reading " << name;
@@ -159,6 +160,7 @@ void PortalConfigResponse::setRawResponse(const QByteArray response)
 
 void PortalConfigResponse::setUsername(const QString username)
 {
+    PLOGI << "Setting the username to [" + username + "]...";
     m_username = username;
 }
 
