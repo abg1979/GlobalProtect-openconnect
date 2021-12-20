@@ -6,10 +6,10 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QPushButton>
 
-#include "gpserviceinterface.h"
 #include "portalconfigresponse.h"
 #include "settingsdialog.h"
 #include "gatewayauthenticatorparams.h"
+#include "vpn.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GPClient; }
@@ -20,11 +20,19 @@ class GPClient : public QMainWindow
     Q_OBJECT
 
 public:
-    GPClient(QWidget *parent = nullptr);
+    GPClient(QWidget *parent, IVpn *vpn);
     ~GPClient();
 
     void activate();
     void quit();
+
+    QString portal() const;
+    void portal(QString);
+
+    GPGateway currentGateway() const;
+    void setCurrentGateway(const GPGateway gateway);
+
+    void doConnect();
 
 private slots:
     void onSettingsButtonClicked();
@@ -59,7 +67,7 @@ private:
     };
 
     Ui::GPClient *ui;
-    com::yuezk::qt::GPService *vpn;
+    IVpn *vpn;
 
     QSystemTrayIcon *systemTrayIcon;
     QMenu *contextMenu;
@@ -84,19 +92,14 @@ private:
     void populateGatewayMenu();
     void updateConnectionStatus(const VpnStatus &status);
 
-    void doConnect();
     void portalLogin();
     void tryGatewayLogin();
     void gatewayLogin();
 
-    QString portal() const;
     bool connected() const;
 
     QList<GPGateway> allGateways() const;
     void setAllGateways(QList<GPGateway> gateways);
-
-    GPGateway currentGateway() const;
-    void setCurrentGateway(const GPGateway gateway);
 
     void clearSettings();
 };

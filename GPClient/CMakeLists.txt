@@ -36,6 +36,8 @@ add_executable(gpclient
     challengedialog.h
     challengedialog.cpp
     challengedialog.ui
+    vpn_dbus.cpp
+    vpn_json.cpp
     resources.qrc
     ${gpclient_GENERATED_SOURCES}
 )
@@ -55,7 +57,7 @@ add_3rdparty(
 add_3rdparty(
     plog
     GIT_REPOSITORY https://github.com/SergiusTheBest/plog.git
-    GIT_TAG 1.1.5
+    GIT_TAG master
     CMAKE_ARGS
         -DPLOG_BUILD_SAMPLES=OFF
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
